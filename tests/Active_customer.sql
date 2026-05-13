@@ -1,3 +1,4 @@
 select customer_id
 from {{ ref('customers') }}
-where number_of_orders = 0
+where number_of_orders < 0
+
