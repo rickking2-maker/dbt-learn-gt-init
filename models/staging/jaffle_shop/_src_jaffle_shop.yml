@@ -10,6 +10,15 @@ sources:
       - name: locations
       - name: order_items
       - name: orders
+        config:
+          freshness:
+            warn_after:
+              count: 1
+              period: day
+            error_after:
+              count: 2
+              period: day
+          loaded_at_field: _etl_loaded_at
       - name: products
       - name: stores
       - name: supplies
