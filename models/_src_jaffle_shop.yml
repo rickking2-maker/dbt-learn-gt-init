@@ -1,0 +1,63 @@
+version: 2
+
+sources:
+  - name: jaffle_shop
+    description: Raw application data for the Jaffle Shop example project.
+    database: raw
+    tables:
+      - name: customers
+        description: Raw customer records from the source application. One row per customer.
+        columns:
+          - name: id
+            data_tests:
+              - not_null
+              - unique
+
+      - name: customers_test
+        description: Auxiliary customer table available in the raw source.
+
+      - name: orders
+        description: Raw order records from the source application. One row per order.
+        config:
+          freshness:
+            warn_after:
+              count: 1
+              period: day
+            error_after:
+              count: 2
+              period: day
+          loaded_at_field: _etl_loaded_at
+        columns:
+          - name: id
+            data_tests:
+              - not_null
+              - unique
+          - name: user_id
+            data_tests:
+              - not_null
+              - relationships:
+                  arguments:
+                    to: source('jaffle_shop', 'customers')
+                    field: id
+          - name: status
+            data_tests:
+              - accepted_values:
+                  arguments:
+                    values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
+
+      - name: orders_view
+        description: Raw view related to orders provided by the source system.
+
+      - name: products
+        description: Raw product catalog records from the source application. One row per product.
+        columns:
+          - name: sku
+            data_tests:
+              - not_null
+              - unique
+          - name: name
+            data_tests:
+              - not_null
+          - name: price
+            data_tests:
+              - not_null
